@@ -1,125 +1,134 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Admin Pemulihan HP</title>
-
-  <link rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-
+  <title>Admin Dashboard Pemulihan HP</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <style>
-    body {
-      margin: 0;
-      padding: 20px;
-      font-family: Arial, sans-serif;
-      background: #f1f5f9;
-      color: #172033;
-    }
-
-    main {
-      max-width: 900px;
-      margin: auto;
-    }
-
-    section {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 18px;
-    }
-
-    input, button {
-      box-sizing: border-box;
-      width: 100%;
-      padding: 12px;
-      margin: 7px 0;
-    }
-
-    button {
-      border: 0;
-      border-radius: 7px;
-      background: #2563eb;
-      color: white;
-      cursor: pointer;
-    }
-
-    #map {
-      height: 400px;
-      border-radius: 10px;
-    }
-
-    #status {
-      overflow-wrap: anywhere;
-    }
+    body { margin: 0; padding: 20px; font-family: Arial, sans-serif; background: #f1f5f9; color: #172033; }
+    main { max-width: 900px; margin: auto; }
+    section { background: white; border-radius: 12px; padding: 20px; margin-bottom: 18px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    input, button { box-sizing: border-box; width: 100%; padding: 12px; margin: 7px 0; border: 1px solid #ccc; border-radius: 7px; }
+    button { background: #2563eb; color: white; border: 0; cursor: pointer; font-weight: bold; }
+    button:hover { background: #1d4ed8; }
+    #map { height: 400px; border-radius: 10px; display: none; }
+    #login-section { max-width: 400px; margin: 50px auto; }
+    #dashboard-section { display: none; }
+    .logout-btn { background: #dc2626; width: auto; padding: 8px 15px; float: right; }
   </style>
 </head>
 <body>
 <main>
-  <h1>Admin Pemulihan HP</h1>
-  <p>Dashboard laporan lokasi perangkat.</p>
-
-  <section>
-    <h3>Masukkan koordinat laporan</h3>
-
-    <label for="lat">Latitude</label>
-    <input id="lat" type="number" step="any"
-      placeholder="-6.200000">
-
-    <label for="lon">Longitude</label>
-    <input id="lon" type="number" step="any"
-      placeholder="106.816666">
-
-    <button id="show">Tampilkan di peta</button>
-    <p id="status" aria-live="polite"></p>
+  <!-- Bagian Login -->
+  <section id="login-section">
+    <h2>Login Admin</h2>
+    <input type="email" id="email" placeholder="Email Admin">
+    <input type="password" id="password" placeholder="Password">
+    <button id="btn-login">Masuk</button>
+    <p id="login-status" style="color: red; text-align: center;"></p>
   </section>
 
-  <section>
-    <h3>Peta lokasi</h3>
-    <div id="map"></div>
-  </section>
+  <!-- Bagian Dashboard (Sembunyi sebelum login) -->
+  <div id="dashboard-section">
+    <button id="btn-logout" class="logout-btn">Logout</button>
+    <h1>Dashboard Admin</h1>
+    <p>Peta lokasi perangkat yang dilaporkan.</p>
+
+    <section>
+      <h3>Laporan Terbaru</h3>
+      <button id="btn-refresh" style="background:#10b981; width:auto; padding:8px 15px;">Refresh Data</button>
+      <p id="status-data"></p>
+      <div id="map"></div>
+    </section>
+  </div>
 </main>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-  const map = L.map("map").setView([-2.5, 118], 5);
+<script type="module">
+  import { db, auth, collection, getDocs, query, orderBy, signInWithEmailAndPassword, onAuthStateChanged, signOut } from './firebase.js';
 
-  L.tileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    {
-      attribution: "&copy; OpenStreetMap contributors"
+  const loginSection = document.getElementById('login-section');
+  const dashboardSection = document.getElementById('dashboard-section');
+  const mapElement = document.getElementById('map');
+  const loginStatus = document.getElementById('login-status');
+  const statusData = document.getElementById('status-data');
+  
+  let map, markers = L.layerGroup();
+
+  // Inisialisasi Peta
+  function initMap() {
+    mapElement.style.display = 'block';
+    if(!map) {
+      map = L.map("map").setView([-2.5, 118], 5); // Default tengah Indonesia
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors"
+      }).addTo(map);
+      markers.addTo(map);
     }
-  ).addTo(map);
+  }
 
-  let marker = null;
-
-  document.getElementById("show").addEventListener("click", () => {
-    const lat = Number(document.getElementById("lat").value);
-    const lon = Number(document.getElementById("lon").value);
-    const status = document.getElementById("status");
-
-    if (
-      document.getElementById("lat").value.trim() === "" ||
-      document.getElementById("lon").value.trim() === "" ||
-      !Number.isFinite(lat) ||
-      !Number.isFinite(lon) ||
-      lat < -90 || lat > 90 ||
-      lon < -180 || lon > 180
-    ) {
-      status.textContent = "Masukkan koordinat yang valid.";
-      return;
+  // Mengambil data dari Firestore
+  async function loadData() {
+    statusData.textContent = "Mengambil data...";
+    markers.clearLayers();
+    try {
+      const q = query(collection(db, "laporan_lokasi"), orderBy("waktu", "desc"));
+      const querySnapshot = await getDocs(q);
+      
+      let count = 0;
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if(data.latitude && data.longitude) {
+          count++;
+          const timeString = data.waktu ? data.waktu.toDate().toLocaleString('id-ID') : 'Waktu tidak diketahui';
+          
+          L.marker([data.latitude, data.longitude])
+            .bindPopup(`<b>Dilaporkan pada:</b><br>${timeString}<br><b>Browser:</b> ${data.browser}`)
+            .addTo(markers);
+          
+          // Arahkan peta ke lokasi terbaru
+          if(count === 1) map.setView([data.latitude, data.longitude], 13);
+        }
+      });
+      statusData.textContent = `Berhasil memuat ${count} titik lokasi.`;
+    } catch (error) {
+      console.error(error);
+      statusData.textContent = "Gagal memuat data. Pastikan izin Firestore sesuai.";
     }
+  }
 
-    if (marker) map.removeLayer(marker);
+  // Logika Login
+  document.getElementById('btn-login').addEventListener('click', async () => {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    loginStatus.textContent = "Proses login...";
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      loginStatus.textContent = "Email atau Password salah!";
+    }
+  });
 
-    marker = L.marker([lat, lon])
-      .addTo(map)
-      .bindPopup("Lokasi dari laporan yang dibagikan")
-      .openPopup();
+  // Logika Logout
+  document.getElementById('btn-logout').addEventListener('click', async () => {
+    await signOut(auth);
+  });
 
-    map.setView([lat, lon], 16);
-    status.textContent = "Koordinat ditampilkan di peta.";
+  document.getElementById('btn-refresh').addEventListener('click', loadData);
+
+  // Pantau status login
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      loginSection.style.display = 'none';
+      dashboardSection.style.display = 'block';
+      initMap();
+      loadData(); // Langsung tarik data saat berhasil login
+    } else {
+      loginSection.style.display = 'block';
+      dashboardSection.style.display = 'none';
+      mapElement.style.display = 'none';
+    }
   });
 </script>
 </body>
