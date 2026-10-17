@@ -29,7 +29,7 @@
     <p id="login-status" style="color: red; text-align: center;"></p>
   </section>
 
-  <!-- Bagian Dashboard (Sembunyi sebelum login) -->
+  <!-- Bagian Dashboard -->
   <div id="dashboard-section">
     <button id="btn-logout" class="logout-btn">Logout</button>
     <h1>Dashboard Admin</h1>
@@ -56,11 +56,10 @@
   
   let map, markers = L.layerGroup();
 
-  // Inisialisasi Peta
   function initMap() {
     mapElement.style.display = 'block';
     if(!map) {
-      map = L.map("map").setView([-2.5, 118], 5); // Default tengah Indonesia
+      map = L.map("map").setView([-2.5, 118], 5);
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "&copy; OpenStreetMap contributors"
       }).addTo(map);
@@ -68,7 +67,6 @@
     }
   }
 
-  // Mengambil data dari Firestore
   async function loadData() {
     statusData.textContent = "Mengambil data...";
     markers.clearLayers();
@@ -82,23 +80,18 @@
         if(data.latitude && data.longitude) {
           count++;
           const timeString = data.waktu ? data.waktu.toDate().toLocaleString('id-ID') : 'Waktu tidak diketahui';
-          
           L.marker([data.latitude, data.longitude])
             .bindPopup(`<b>Dilaporkan pada:</b><br>${timeString}<br><b>Browser:</b> ${data.browser}`)
             .addTo(markers);
-          
-          // Arahkan peta ke lokasi terbaru
           if(count === 1) map.setView([data.latitude, data.longitude], 13);
         }
       });
       statusData.textContent = `Berhasil memuat ${count} titik lokasi.`;
     } catch (error) {
-      console.error(error);
       statusData.textContent = "Gagal memuat data. Pastikan izin Firestore sesuai.";
     }
   }
 
-  // Logika Login
   document.getElementById('btn-login').addEventListener('click', async () => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -110,20 +103,18 @@
     }
   });
 
-  // Logika Logout
   document.getElementById('btn-logout').addEventListener('click', async () => {
     await signOut(auth);
   });
 
   document.getElementById('btn-refresh').addEventListener('click', loadData);
 
-  // Pantau status login
   onAuthStateChanged(auth, (user) => {
     if (user) {
       loginSection.style.display = 'none';
       dashboardSection.style.display = 'block';
       initMap();
-      loadData(); // Langsung tarik data saat berhasil login
+      loadData();
     } else {
       loginSection.style.display = 'block';
       dashboardSection.style.display = 'none';
