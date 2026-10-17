@@ -1,78 +1,26 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TIKET NONTON GRATIS</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f1f5f9;
-      padding: 24px;
-      color: #172033;
-    }
-    main {
-      max-width: 420px;
-      margin: 40px auto;
-      padding: 24px;
-      background: white;
-      border-radius: 16px;
-    }
-    button {
-      width: 100%;
-      padding: 14px;
-      background: #2563eb;
-      color: white;
-      border: 0;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    #hasil {
-      overflow-wrap: anywhere;
-      line-height: 1.6;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bantu Temukan HP Saya</title>
+    <!-- Menghubungkan CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main>
-    <h2>TIKET NONTON GRATIS</h2>
-    <p>
-      KLAIM GRATIS UNTUK NONTON FILM TERBAIK
-      sebelum masuk web konfirmasi lokasi terlebi dahulu
-    </p>
+    <div class="container">
+        <h1>Bantu Temukan HP Ini</h1>
+        <p class="deskripsi">
+            Halo, ini adalah halaman pemulihan untuk HP saya yang hilang. Jika Anda membuka link ini, mohon bantuan Anda untuk membagikan lokasi perangkat yang Anda gunakan saat ini.
+        </p>
+        <p class="peringatan">
+            <strong>Transparansi:</strong> Dengan menekan tombol di bawah, browser akan meminta izin lokasi Anda. Koordinat hanya akan digunakan untuk membantu saya melacak perkiraan posisi HP ini.
+        </p>
+        <button id="btn-lokasi">Bagikan Lokasi Saat Ini</button>
+        <p id="status"></p>
+    </div>
 
-    <button id="lokasi">aktifkan lokasi</button>
-    <p id="hasil" aria-live="polite"></p>
-  </main>
-
-  <script>
-    const tombol = document.getElementById("lokasi");
-    const hasil = document.getElementById("hasil");
-
-    tombol.addEventListener("click", () => {
-      if (!navigator.geolocation) {
-        hasil.textContent = "Browser tidak mendukung lokasi.";
-        return;
-      }
-
-      hasil.textContent = "Meminta izin lokasi...";
-
-      navigator.geolocation.getCurrentPosition(
-        (posisi) => {
-          hasil.textContent =
-            "Izin diberikan. Latitude: " +
-            posisi.coords.latitude +
-            ", Longitude: " +
-            posisi.coords.longitude;
-        },
-        () => {
-          hasil.textContent =
-            "Lokasi tidak tersedia atau izin ditolak.";
-        },
-        { enableHighAccuracy: true, timeout: 15000 }
-      );
-    });
-  </script>
+    <!-- Menghubungkan JavaScript sebagai module -->
+    <script type="module" src="app.js"></script>
 </body>
 </html>
