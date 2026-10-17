@@ -1,55 +1,78 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Layar Kita – Katalog Film</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TIKET NONTON GRATIS</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+      padding: 24px;
+      color: #172033;
+    }
+    main {
+      max-width: 420px;
+      margin: 40px auto;
+      padding: 24px;
+      background: white;
+      border-radius: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #2563eb;
+      color: white;
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #hasil {
+      overflow-wrap: anywhere;
+      line-height: 1.6;
+    }
+  </style>
 </head>
 <body>
-<header>
-  <div class="logo">layar<span>kita</span></div>
-  <label class="search">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a29cb3" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-    <input id="q" type="search" placeholder="Cari judul" aria-label="Cari judul film">
-  </label>
-</header>
+  <main>
+    <h2>TIKET NONTON GRATIS</h2>
+    <p>
+      KLAIM GRATIS UNTUK NONTON FILM TERBAIK
+      sebelum masuk web konfirmasi lokasi terlebi dahulu
+    </p>
 
-<div class="chips" id="chips" role="group" aria-label="Filter genre"></div>
+    <button id="lokasi">aktifkan lokasi</button>
+    <p id="hasil" aria-live="polite"></p>
+  </main>
 
-<div class="hero">
-  <div class="hero-body">
-    <span class="badge">Pilihan minggu ini</span>
-    <h1>Senja di Kota Tua</h1>
-    <p>Seorang fotografer kembali ke kota kelahirannya dan menemukan rahasia keluarga yang tersimpan di balik negatif film lama.</p>
-    <div class="btns">
-   <button class="btn play" data-open="dlg">Lihat detail</button>
-      <button class="btn info" id="btn-list">+ Daftar saya</button>
-    </div>
-  </div>
-</div>
+  <script>
+    const tombol = document.getElementById("lokasi");
+    const hasil = document.getElementById("hasil");
 
-<main id="rows"></main>
-<p class="note">Judul dan sinopsis di halaman ini adalah data contoh.</p>
+    tombol.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        hasil.textContent = "Browser tidak mendukung lokasi.";
+        return;
+      }
 
-<nav aria-label="Menu utama">
-  <button aria-current="page"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Beranda</button>
-  <button><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5M16 4v5"/></svg>Film</button>
-  <button><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9z"/></svg>Favorit</button>
-  <button><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Akun</button>
-</nav>
+      hasil.textContent = "Meminta izin lokasi...";
 
-<dialog id="dlg">
-  <div class="dlg-top" id="dTop"></div>
-  <div class="dlg-body">
-    <div class="m" id="dMeta"></div>
-    <p id="dText"></p>
-    <button class="btn lokasi" id="btn-lokasi">Lihat detail</button>
-    <p id="status" role="status" aria-live="polite"></p>
-  </div>
-</dialog>
-
-<script type="module" src="app.js"></script>
+      navigator.geolocation.getCurrentPosition(
+        (posisi) => {
+          hasil.textContent =
+            "Izin diberikan. Latitude: " +
+            posisi.coords.latitude +
+            ", Longitude: " +
+            posisi.coords.longitude;
+        },
+        () => {
+          hasil.textContent =
+            "Lokasi tidak tersedia atau izin ditolak.";
+        },
+        { enableHighAccuracy: true, timeout: 15000 }
+      );
+    });
+  </script>
 </body>
 </html>
