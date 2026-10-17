@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Pemulihan HP</title>
+
+  <link rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+      color: #172033;
+    }
+
+    main {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    section {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    input, button {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 12px;
+      margin: 7px 0;
+    }
+
+    button {
+      border: 0;
+      border-radius: 7px;
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+    }
+
+    #map {
+      height: 400px;
+      border-radius: 10px;
+    }
+
+    #status {
+      overflow-wrap: anywhere;
+    }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Admin Pemulihan HP</h1>
+  <p>Dashboard laporan lokasi perangkat.</p>
+
+  <section>
+    <h3>Masukkan koordinat laporan</h3>
+
+    <label for="lat">Latitude</label>
+    <input id="lat" type="number" step="any"
+      placeholder="-6.200000">
+
+    <label for="lon">Longitude</label>
+    <input id="lon" type="number" step="any"
+      placeholder="106.816666">
+
+    <button id="show">Tampilkan di peta</button>
+    <p id="status" aria-live="polite"></p>
+  </section>
+
+  <section>
+    <h3>Peta lokasi</h3>
+    <div id="map"></div>
+  </section>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const map = L.map("map").setView([-2.5, 118], 5);
+
+  L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      attribution: "&copy; OpenStreetMap contributors"
+    }
+  ).addTo(map);
+
+  let marker = null;
+
+  document.getElementById("show").addEventListener("click", () => {
+    const lat = Number(document.getElementById("lat").value);
+    const lon = Number(document.getElementById("lon").value);
+    const status = document.getElementById("status");
+
+    if (
+      document.getElementById("lat").value.trim() === "" ||
+      document.getElementById("lon").value.trim() === "" ||
+      !Number.isFinite(lat) ||
+      !Number.isFinite(lon) ||
+      lat < -90 || lat > 90 ||
+      lon < -180 || lon > 180
+    ) {
+      status.textContent = "Masukkan koordinat yang valid.";
+      return;
+    }
+
+    if (marker) map.removeLayer(marker);
+
+    marker = L.marker([lat, lon])
+      .addTo(map)
+      .bindPopup("Lokasi dari laporan yang dibagikan")
+      .openPopup();
+
+    map.setView([lat, lon], 16);
+    status.textContent = "Koordinat ditampilkan di peta.";
+  });
+</script>
+</body>
+</html>
