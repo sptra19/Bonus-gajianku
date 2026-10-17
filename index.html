@@ -1,457 +1,78 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Educational Simulator - Liquid Level Control</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
-
-        :root {
-            --bg-body: #f1f5f9;
-            --bg-card: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --primary: #0ea5e9;
-            --primary-dark: #0284c7;
-            --danger: #ef4444;
-            --success: #10b981;
-            --warning: #f59e0b;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            padding: 20px;
-            line-height: 1.5;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* HEADER */
-        header {
-            background: var(--bg-card);
-            padding: 20px 30px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        header h1 { font-size: 1.5rem; font-weight: 700; color: var(--text-main); }
-        .badge { background: #e0f2fe; color: #0369a1; padding: 6px 12px; border-radius: 20px; font-size: 0.875rem; font-weight: 600; font-family: 'JetBrains Mono'; }
-
-        /* MAIN GRID */
-        .grid-layout {
-            display: grid;
-            grid-template-columns: 350px 1fr 350px;
-            gap: 20px;
-        }
-
-        @media (max-width: 1100px) {
-            .grid-layout { grid-template-columns: 1fr; }
-        }
-
-        .card {
-            background: var(--bg-card);
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            padding: 24px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            display: flex;
-            flex-direction: column;
-        }
-        .card-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; color: var(--text-main); display: flex; align-items: center; gap: 8px; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
-
-        /* PANEL KIRI: EDUKASI & ANALISIS */
-        .analysis-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
-        .math-text { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: #334155; }
-        .math-row { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 4px; }
-        .status-alert { padding: 12px; border-radius: 6px; font-size: 0.9rem; font-weight: 500; background: #eff6ff; color: #1d4ed8; border-left: 4px solid #3b82f6; transition: 0.3s; }
-        
-        /* PANEL TENGAH: SVG VISUALIZATION */
-        .visual-area { display: flex; justify-content: center; align-items: center; min-height: 350px; background: #ffffff; }
-        svg.schematic { width: 100%; max-width: 500px; height: auto; overflow: visible; }
-        .water-fill { transition: height 0.1s linear, y 0.1s linear; }
-        .flow-anim { stroke-dasharray: 8; animation: flow 0.5s linear infinite; }
-        @keyframes flow { to { stroke-dashoffset: -16; } }
-
-        /* PANEL KANAN: KONTROL */
-        .input-group { margin-bottom: 12px; }
-        .input-group label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
-        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;}
-        input[type="number"] { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: 'JetBrains Mono'; font-size: 1rem; color: var(--text-main); transition: 0.2s; }
-        input[type="number"]:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px #e0f2fe; }
-        
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 10px; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-dark); }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-danger:hover { background: #dc2626; }
-        .btn-outline { background: transparent; border: 1px solid #cbd5e1; color: var(--text-muted); }
-        .btn-outline:hover { background: #f1f5f9; color: var(--text-main); }
-
-        /* AREA GRAFIK */
-        .chart-card { height: 400px; }
-        
-        /* Keterangan Parameter Jurnal */
-        .info-text { font-size: 0.8rem; color: var(--text-muted); margin-top: 15px; text-align: justify; background: #f8fafc; padding: 10px; border-radius: 6px;}
-
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TIKET NONTON GRATIS</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+      padding: 24px;
+      color: #172033;
+    }
+    main {
+      max-width: 420px;
+      margin: 40px auto;
+      padding: 24px;
+      background: white;
+      border-radius: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #2563eb;
+      color: white;
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #hasil {
+      overflow-wrap: anywhere;
+      line-height: 1.6;
+    }
+  </style>
 </head>
 <body>
+  <main>
+    <h2>TIKET NONTON GRATIS</h2>
+    <p>
+      KLAIM GRATIS UNTUK NONTON FILM TERBAIK
+      sebelum masuk web konfirmasi lokasi terlebi dahulu
+    </p>
 
-<div class="container">
-    <header>
-        <div>
-            <h1>Simulasi Sistem Kendali Level Cairan</h1>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Pendekatan Orde Pertama berdasarkan Pemodelan Jurnal</p>
-        </div>
-        <div class="badge">G(s) = 1 / (1012.6s + 1)</div>
-    </header>
+    <button id="lokasi">aktifkan lokasi</button>
+    <p id="hasil" aria-live="polite"></p>
+  </main>
 
-    <div class="grid-layout">
-        
-        <div class="card">
-            <h2 class="card-title">📖 Analisis Real-Time</h2>
-            
-            <div class="analysis-box">
-                <div class="math-row"><span class="math-text">Set Point (SP)</span><b id="lblSP" class="math-text">0.0 %</b></div>
-                <div class="math-row"><span class="math-text">Level Aktual (PV)</span><b id="lblPV" class="math-text" style="color: var(--primary);">0.0 %</b></div>
-                <div class="math-row"><span class="math-text">Error (e = SP - PV)</span><b id="lblErr" class="math-text" style="color: var(--danger);">0.0</b></div>
-            </div>
+  <script>
+    const tombol = document.getElementById("lokasi");
+    const hasil = document.getElementById("hasil");
 
-            <div class="analysis-box">
-                <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">KOMPONEN KENDALI PID (u)</div>
-                <div class="math-row"><span class="math-text">Proporsional (Kp·e)</span><b id="lblP" class="math-text">0.00</b></div>
-                <div class="math-row"><span class="math-text">Integral (Ki·∫e)</span><b id="lblI" class="math-text">0.00</b></div>
-                <div class="math-row"><span class="math-text">Derivatif (Kd·de/dt)</span><b id="lblD" class="math-text">0.00</b></div>
-                <div class="math-row" style="border:none; margin-top: 8px;"><span class="math-text" style="font-weight: 700;">Total Output (u)</span><b id="lblU" class="math-text" style="font-weight: 700; color: var(--success);">0.00</b></div>
-            </div>
+    tombol.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        hasil.textContent = "Browser tidak mendukung lokasi.";
+        return;
+      }
 
-            <div id="statusAlert" class="status-alert">
-                Menunggu simulasi dimulai... Masukkan parameter dan tekan 'Jalankan'.
-            </div>
-        </div>
+      hasil.textContent = "Meminta izin lokasi...";
 
-        <div class="card">
-            <h2 class="card-title">🔬 Skema Tangki Fluida</h2>
-            <div class="visual-area">
-                <svg class="schematic" viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="pipeGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#cbd5e1" />
-                            <stop offset="50%" stop-color="#f8fafc" />
-                            <stop offset="100%" stop-color="#94a3b8" />
-                        </linearGradient>
-                        <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#38bdf8" />
-                            <stop offset="100%" stop-color="#0284c7" />
-                        </linearGradient>
-                    </defs>
-
-                    <path d="M 50 100 L 200 100 L 200 150" fill="none" stroke="url(#pipeGrad)" stroke-width="20" stroke-linejoin="round"/>
-                    <path d="M 50 100 L 200 100 L 200 150" fill="none" stroke="#475569" stroke-width="22" stroke-linejoin="round" z-index="-1" opacity="0.5"/>
-                    
-                    <polygon points="130,80 170,120 170,80 130,120" fill="#f1f5f9" stroke="#1e293b" stroke-width="2"/>
-                    <rect x="145" y="70" width="10" height="20" fill="#1e293b" />
-                    <circle id="valveInLed" cx="150" cy="60" r="8" fill="#ef4444" stroke="#1e293b" stroke-width="2"/>
-                    <text x="140" y="45" font-size="12" font-family="Arial" font-weight="bold">M</text>
-
-                    <line id="streamIn" x1="200" y1="150" x2="200" y2="350" stroke="#38bdf8" stroke-width="12" class="flow-anim" opacity="0" stroke-linecap="round"/>
-
-                    <rect x="150" y="150" width="200" height="200" fill="#f8fafc" stroke="#334155" stroke-width="4" rx="8" />
-                    
-                    <rect id="svgWater" x="152" y="348" width="196" height="0" fill="url(#waterGrad)" rx="6" class="water-fill" />
-                    
-                    <path d="M 160 160 L 160 340 M 160 160 L 165 160 M 160 205 L 165 205 M 160 250 L 165 250 M 160 295 L 165 295 M 160 340 L 165 340" stroke="#94a3b8" stroke-width="2"/>
-
-                    <text x="50" y="80" font-family="serif" font-size="16" font-style="italic">Q + q<tspan dy="5" font-size="12">i</tspan></text>
-                    <text x="360" y="140" font-family="serif" font-size="16" font-style="italic">Capacitance, C</text>
-                    <line x1="355" y1="135" x2="280" y2="200" stroke="#64748b" stroke-width="1" stroke-dasharray="4"/>
-
-                    <path d="M 350 330 L 450 330" fill="none" stroke="url(#pipeGrad)" stroke-width="20" />
-                    <path d="M 350 330 L 450 330" fill="none" stroke="#475569" stroke-width="22" z-index="-1" opacity="0.5"/>
-                    
-                    <line id="streamOut" x1="350" y1="330" x2="450" y2="330" stroke="#38bdf8" stroke-width="12" class="flow-anim" opacity="0" stroke-linecap="round"/>
-
-                    <polygon points="380,310 420,350 420,310 380,350" fill="#f1f5f9" stroke="#1e293b" stroke-width="2"/>
-                    <circle cx="400" cy="330" r="6" fill="#1e293b"/>
-                    <text x="385" y="295" font-family="serif" font-size="14">Load valve</text>
-                    <text x="450" y="310" font-family="serif" font-size="16" font-style="italic">Q + q<tspan dy="5" font-size="12">o</tspan></text>
-
-                </svg>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2 class="card-title">⚙️ Panel Kendali</h2>
-            
-            <div class="input-group">
-                <label>Set Point / Target Level (%)</label>
-                <input type="number" id="inpSP" value="100" step="1">
-            </div>
-
-            <div style="border-top: 1px solid var(--border); margin: 16px 0; padding-top: 16px;">
-                <label style="display:block; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 12px;">Parameter Gain PID</label>
-                <div class="input-row">
-                    <div class="input-group"><label>Proportional (Kp)</label><input type="number" id="inpKp" value="120"></div>
-                    <div class="input-group"><label>Integral (Ki)</label><input type="number" id="inpKi" value="30"></div>
-                </div>
-                <div class="input-group"><label>Derivative (Kd)</label><input type="number" id="inpKd" value="10"></div>
-            </div>
-
-            <button id="btnRun" class="btn btn-primary">▶ Jalankan Simulasi</button>
-            <button id="btnReset" class="btn btn-outline">↺ Reset Parameter</button>
-
-            <div class="info-text">
-                <b>💡 Info Jurnal:</b> Simulasi ini diprogram menggunakan nilai blok gain (Kp=120, Ki=30, Kd=10) persis seperti pada <i>Figure 3a</i> di jurnal. Hal ini secara teori akan memaksa sistem menghasilkan lonjakan (overshoot) yang terlihat jelas.
-            </div>
-        </div>
-
-    </div>
-
-    <div class="card chart-card">
-        <canvas id="responseChart"></canvas>
-    </div>
-
-</div>
-
-<script>
-    // --- MODEL MATEMATIKA & VARIABEL STATE ---
-    const TAU = 1012.6; // Konstanta Waktu Jurnal
-    const DT = 0.1;     // Resolusi waktu kalkulasi (detik)
-    const SPEED = 25;   // Frame multiplier (mempercepat simulasi)
-
-    let pv = 0.0, integral = 0.0, lastErr = 0.0, time = 0.0;
-    let u_out = 0.0, p_out = 0.0, i_out = 0.0, d_out = 0.0;
-    let isRunning = false, animFrame;
-
-    // --- DOM Elements ---
-    const uiSvgWater = document.getElementById('svgWater');
-    const uiStreamIn = document.getElementById('streamIn');
-    const uiStreamOut = document.getElementById('streamOut');
-    const uiValveInLed = document.getElementById('valveInLed');
-    
-    // Labels
-    const lblSP = document.getElementById('lblSP');
-    const lblPV = document.getElementById('lblPV');
-    const lblErr = document.getElementById('lblErr');
-    const lblP = document.getElementById('lblP');
-    const lblI = document.getElementById('lblI');
-    const lblD = document.getElementById('lblD');
-    const lblU = document.getElementById('lblU');
-    const statusAlert = document.getElementById('statusAlert');
-
-    // --- INISIALISASI CHART.JS ---
-    const ctx = document.getElementById('responseChart').getContext('2d');
-    const chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [
-                {
-                    label: 'Level Cairan (PV)',
-                    data: [],
-                    borderColor: '#0ea5e9',
-                    backgroundColor: 'rgba(14, 165, 233, 0.1)',
-                    borderWidth: 2,
-                    pointRadius: 0,
-                    fill: true,
-                    tension: 0.2
-                },
-                {
-                    label: 'Target (SP)',
-                    data: [],
-                    borderColor: '#ef4444',
-                    borderWidth: 2,
-                    borderDash: [5, 5],
-                    pointRadius: 0,
-                    fill: false
-                }
-            ]
+      navigator.geolocation.getCurrentPosition(
+        (posisi) => {
+          hasil.textContent =
+            "Izin diberikan. Latitude: " +
+            posisi.coords.latitude +
+            ", Longitude: " +
+            posisi.coords.longitude;
         },
-        options: {
-            responsive: true, maintainAspectRatio: false, animation: false,
-            interaction: { mode: 'index', intersect: false },
-            scales: {
-                x: { title: { display: true, text: 'Waktu (s)' }, grid: { color: '#f1f5f9' } },
-                y: { min: 0, max: 160, title: { display: true, text: 'Level (%)' }, grid: { color: '#f1f5f9' } }
-            },
-            plugins: { legend: { position: 'top' } }
-        }
+        () => {
+          hasil.textContent =
+            "Lokasi tidak tersedia atau izin ditolak.";
+        },
+        { enableHighAccuracy: true, timeout: 15000 }
+      );
     });
-
-    // --- FUNGSI UPDATE PENJELASAN (EDUKASI) ---
-    function updateEducationalPanel(error, p, i, d, u) {
-        // Update Nilai Angka
-        lblSP.innerText = document.getElementById('inpSP').value + " %";
-        lblPV.innerText = pv.toFixed(1) + " %";
-        lblErr.innerText = error.toFixed(2);
-        lblP.innerText = p.toFixed(2);
-        lblI.innerText = i.toFixed(2);
-        lblD.innerText = d.toFixed(2);
-        lblU.innerText = u.toFixed(2);
-
-        // Update Narasi Logika (Teks dinamis)
-        let msg = "";
-        let color = "", bg = "", border = "";
-
-        if (error > 10) {
-            msg = "Error besar (Positif). Katup kontrol membuka penuh. Cairan masuk dengan deras.";
-            color = "#1d4ed8"; bg = "#eff6ff"; border = "#3b82f6";
-        } else if (error < -2) {
-            msg = "🚨 OVERSHOOT! Level melebihi set point. Katup tertutup. Cairan keluar melalui beban.";
-            color = "#991b1b"; bg = "#fef2f2"; border = "#ef4444";
-        } else if (Math.abs(error) <= 2 && Math.abs(error) > 0.1) {
-            msg = "Mendekati target. Sinyal P mengecil, sistem mengandalkan sinyal Integral (I) untuk stabilitas.";
-            color = "#854d0e"; bg = "#fefce8"; border = "#eab308";
-        } else {
-            msg = "✅ Sistem Stabil (Steady State). Variabel proses telah mencapai target.";
-            color = "#166534"; bg = "#f0fdf4"; border = "#22c55e";
-        }
-
-        statusAlert.innerText = msg;
-        statusAlert.style.color = color;
-        statusAlert.style.backgroundColor = bg;
-        statusAlert.style.borderLeftColor = border;
-    }
-
-    // --- LOOP SIMULASI UTAMA ---
-    function runSimulation() {
-        if (!isRunning) return;
-
-        let sp = parseFloat(document.getElementById('inpSP').value) || 0;
-        let kp = parseFloat(document.getElementById('inpKp').value) || 0;
-        let ki = parseFloat(document.getElementById('inpKi').value) || 0;
-        let kd = parseFloat(document.getElementById('inpKd').value) || 0;
-
-        for (let step = 0; step < SPEED; step++) {
-            let error = sp - pv;
-            
-            // Kalkulasi PID Terpisah
-            integral += error * DT;
-            let derivative = (error - lastErr) / DT;
-            
-            p_out = kp * error;
-            i_out = ki * integral;
-            d_out = kd * derivative;
-            
-            u_out = p_out + i_out + d_out; // Total Sinyal Kendali
-
-            // Model Orde 1
-            let dy_dt = (u_out - pv) / TAU;
-            pv += dy_dt * DT;
-            
-            lastErr = error;
-            time += DT;
-
-            // Simpan ke Grafik
-            if (Math.round(time * 10) % 30 === 0) {
-                chart.data.labels.push(time.toFixed(0));
-                chart.data.datasets[0].data.push(pv);
-                chart.data.datasets[1].data.push(sp);
-                if (chart.data.labels.length > 200) {
-                    chart.data.labels.shift();
-                    chart.data.datasets[0].data.shift();
-                    chart.data.datasets[1].data.shift();
-                }
-            }
-        }
-
-        // --- UPDATE VISUAL SVG ---
-        // Batasi nilai visual antara 0 hingga 110% agar tidak keluar layar
-        let visualPV = Math.min(110, Math.max(0, pv));
-        
-        // Tangki SVG tinggi max = 200px (y awal = 350, y penuh = 150)
-        let fillHeight = (visualPV / 100) * 200; 
-        uiSvgWater.setAttribute('height', fillHeight);
-        uiSvgWater.setAttribute('y', 350 - fillHeight);
-
-        // Animasi Aliran Masuk berdasarkan U (Sinyal Katup)
-        if (u_out > 0) {
-            uiStreamIn.setAttribute('opacity', '1');
-            uiStreamIn.setAttribute('y2', (350 - fillHeight).toString()); // Air jatuh sampai batas permukaan
-            uiValveInLed.setAttribute('fill', '#10b981'); // Lampu Katup Hijau
-        } else {
-            uiStreamIn.setAttribute('opacity', '0');
-            uiValveInLed.setAttribute('fill', '#ef4444'); // Lampu Katup Merah
-        }
-
-        // Animasi Aliran Keluar (Berdasarkan level tangki)
-        if (pv > 1) {
-            uiStreamOut.setAttribute('opacity', '1');
-        } else {
-            uiStreamOut.setAttribute('opacity', '0');
-        }
-
-        // --- UPDATE TEKS EDUKASI ---
-        updateEducationalPanel(sp - pv, p_out, i_out, d_out, u_out);
-
-        chart.update();
-        animFrame = requestAnimationFrame(runSimulation);
-    }
-
-    // --- EVENT LISTENER TOMBOL ---
-    const btnRun = document.getElementById('btnRun');
-    btnRun.onclick = () => {
-        isRunning = !isRunning;
-        if (isRunning) {
-            btnRun.innerHTML = "⏸ Jeda Simulasi";
-            btnRun.classList.remove('btn-primary');
-            btnRun.classList.add('btn-danger');
-            
-            let sp = parseFloat(document.getElementById('inpSP').value) || 0;
-            lastErr = sp - pv; // Reset kalkulasi turunan awal
-            runSimulation();
-        } else {
-            btnRun.innerHTML = "▶ Lanjutkan Simulasi";
-            btnRun.classList.remove('btn-danger');
-            btnRun.classList.add('btn-primary');
-            cancelAnimationFrame(animFrame);
-        }
-    };
-
-    document.getElementById('btnReset').onclick = () => {
-        isRunning = false;
-        pv = 0; integral = 0; time = 0; lastErr = 0;
-        cancelAnimationFrame(animFrame);
-        
-        // Reset Grafik
-        chart.data.labels = []; chart.data.datasets[0].data = []; chart.data.datasets[1].data = [];
-        chart.update();
-        
-        // Reset Visual SVG
-        uiSvgWater.setAttribute('height', '0');
-        uiSvgWater.setAttribute('y', '350');
-        uiStreamIn.setAttribute('opacity', '0');
-        uiStreamOut.setAttribute('opacity', '0');
-        uiValveInLed.setAttribute('fill', '#ef4444');
-        
-        // Reset Tombol
-        btnRun.innerHTML = "▶ Jalankan Simulasi";
-        btnRun.classList.remove('btn-danger');
-        btnRun.classList.add('btn-primary');
-        
-        // Reset Teks
-        statusAlert.innerText = "Sistem di-reset. Siap untuk simulasi baru.";
-        statusAlert.style.background = "#eff6ff";
-        statusAlert.style.color = "#1d4ed8";
-        statusAlert.style.borderLeftColor = "#3b82f6";
-    };
-
-</script>
+  </script>
 </body>
 </html>
